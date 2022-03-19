@@ -728,17 +728,17 @@ static int const RCTVideoUnset = -1;
 }
 
 - (void)setupAdsLoader {
-  // Re-use this IMAAdsLoader instance for the entire lifecycle of your app.
-  self.adsLoader = [[IMAAdsLoader alloc] initWithSettings:nil];
-  // NOTE: This line will cause a warning until the next step, "Get the Ads Manager".
-  self.adsLoader.delegate = self;
+    self.adsLoader = [[IMAAdsLoader alloc] initWithSettings:nil];
+    self.adsLoader.delegate = self;
 }
 
 - (void)requestAds {
   // Create an ad display container for ad rendering.
   IMAAdDisplayContainer *adDisplayContainer =
-      [[IMAAdDisplayContainer alloc] initWithAdContainer:self companionSlots:nil];
-  // Create an ad request with our ad tag, display container, and optional user context.
+      [[IMAAdDisplayContainer alloc] initWithAdContainer:self
+                                          viewController:self.reactViewController
+                                          companionSlots:nil];
+   // Create an ad request with our ad tag, display container, and optional user context.
   IMAAdsRequest *request = [[IMAAdsRequest alloc] initWithAdTagUrl:_adTagUrl
                                                 adDisplayContainer:adDisplayContainer
                                                    contentPlayhead:self.contentPlayhead
@@ -749,16 +749,12 @@ static int const RCTVideoUnset = -1;
 #pragma mark AdsLoader Delegates
 
 - (void)adsLoader:(IMAAdsLoader *)loader adsLoadedWithData:(IMAAdsLoadedData *)adsLoadedData {
-  // Grab the instance of the IMAAdsManager and set ourselves as the delegate.
+ // Grab the instance of the IMAAdsManager and set ourselves as the delegate.
   self.adsManager = adsLoadedData.adsManager;
-
-  // NOTE: This line will cause a warning until the next step, "Display Ads".
   self.adsManager.delegate = self;
-
-  // Create ads rendering settings and tell the SDK to use the in-app browser.
+  // Create ads rendering settings to tell the SDK to use the in-app browser.
   IMAAdsRenderingSettings *adsRenderingSettings = [[IMAAdsRenderingSettings alloc] init];
-  adsRenderingSettings.webOpenerPresentingController = _playerViewController;
-
+  adsRenderingSettings.linkOpenerPresentingController  = self;
   // Initialize the ads manager.
   [self.adsManager initializeWithAdsRenderingSettings:adsRenderingSettings];
 }

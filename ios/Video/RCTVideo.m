@@ -748,11 +748,18 @@ static int const RCTVideoUnset = -1;
 
         if (!CGRectEqualToRect(oldRect, newRect)) {
           if (CGRectEqualToRect(newRect, [UIScreen mainScreen].bounds)) {
-            NSLog(@"in fullscreen");
-
+             NSLog(@"in fullscreen");
+	    if(self.onVideoFullscreenPlayerWillPresent) {
+              self.onVideoFullscreenPlayerWillPresent(@{@"target": self.reactTag});
+            }
             [self.reactViewController.view setFrame:[UIScreen mainScreen].bounds];
             [self.reactViewController.view setNeedsLayout];
-          } else NSLog(@"not fullscreen");
+          } else {
+	    NSLog(@"not fullscreen");
+            if(self.onVideoFullscreenPlayerWillDismiss) {
+              self.onVideoFullscreenPlayerWillDismiss(@{@"target": self.reactTag});
+            }
+	  }
         }
 
         return;
